@@ -1,3 +1,4 @@
+require "securerandom"
 # frozen_string_literal: true
 
 module Affinity
@@ -8,247 +9,6 @@ module Affinity
       # @return [void]
       def initialize(client:)
         @client = client
-      end
-
-      # @param request_options [Hash]
-      # @param params [Hash]
-      # @option request_options [String] :base_url
-      # @option request_options [Hash{String => Object}] :additional_headers
-      # @option request_options [Hash{String => Object}] :additional_query_parameters
-      # @option request_options [Hash{String => Object}] :additional_body_parameters
-      # @option request_options [Integer] :timeout_in_seconds
-      # @option params [String] :practice_id
-      # @option params [String] :patient_id
-      # @option params [Affinity::Patients::Types::ListPatientAddressesRequestStatus, nil] :status
-      # @option params [String, nil] :starting_after
-      # @option params [String, nil] :ending_before
-      # @option params [Integer, nil] :limit
-      # @option params [String, nil] :affinity_actor_id
-      # @option params [String, nil] :affinity_actor_type
-      #
-      # @return [Affinity::Types::ListPatientAddressesResponse]
-      def list_patient_addresses(request_options: {}, **params)
-        params = Affinity::Internal::Types::Utils.normalize_keys(params)
-        query_params = {}
-        query_params["status"] = params[:status] if params.key?(:status)
-        query_params["startingAfter"] = params[:starting_after] if params.key?(:starting_after)
-        query_params["endingBefore"] = params[:ending_before] if params.key?(:ending_before)
-        query_params["limit"] = params[:limit] if params.key?(:limit)
-
-        headers = {}
-        headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
-        headers["Affinity-Actor-Type"] = params[:affinity_actor_type] if params[:affinity_actor_type]
-
-        request = Affinity::Internal::JSON::Request.new(
-          base_url: request_options[:base_url],
-          method: "GET",
-          path: "v1/practices/#{URI.encode_uri_component(params[:practice_id].to_s)}/patients/#{URI.encode_uri_component(params[:patient_id].to_s)}/addresses",
-          headers: headers,
-          query: query_params,
-          request_options: request_options
-        )
-        begin
-          response = @client.send(request)
-        rescue Net::HTTPRequestTimeout
-          raise Affinity::Errors::TimeoutError
-        end
-        code = response.code.to_i
-        if code.between?(200, 299)
-          Affinity::Types::ListPatientAddressesResponse.load(response.body)
-        else
-          error_class = Affinity::Errors::ResponseError.subclass_for_code(code)
-          raise error_class.new(response.body, code: code)
-        end
-      end
-
-      # Returns the existing active address for a normalized duplicate. The first address becomes the default. API keys
-      # require Idempotency-Key.
-      #
-      # @param request_options [Hash]
-      # @param params [Affinity::Patients::Types::CreatePatientAddressRequest]
-      # @option request_options [String] :base_url
-      # @option request_options [Hash{String => Object}] :additional_headers
-      # @option request_options [Hash{String => Object}] :additional_query_parameters
-      # @option request_options [Hash{String => Object}] :additional_body_parameters
-      # @option request_options [Integer] :timeout_in_seconds
-      # @option params [String] :practice_id
-      # @option params [String] :patient_id
-      # @option params [String] :idempotency_key
-      # @option params [String, nil] :affinity_actor_id
-      # @option params [String, nil] :affinity_actor_type
-      #
-      # @return [Affinity::Types::CreatePatientAddressResponse]
-      def create_patient_address(request_options: {}, **params)
-        params = Affinity::Internal::Types::Utils.normalize_keys(params)
-        request_data = Affinity::Patients::Types::CreatePatientAddressRequest.new(params).to_h
-        non_body_param_names = %w[practiceId patientId Idempotency-Key Affinity-Actor-Id Affinity-Actor-Type]
-        body = request_data.except(*non_body_param_names)
-
-        headers = {}
-        headers["Idempotency-Key"] = params[:idempotency_key] if params[:idempotency_key]
-        headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
-        headers["Affinity-Actor-Type"] = params[:affinity_actor_type] if params[:affinity_actor_type]
-
-        request = Affinity::Internal::JSON::Request.new(
-          base_url: request_options[:base_url],
-          method: "POST",
-          path: "v1/practices/#{URI.encode_uri_component(params[:practice_id].to_s)}/patients/#{URI.encode_uri_component(params[:patient_id].to_s)}/addresses",
-          headers: headers,
-          body: body,
-          request_options: request_options
-        )
-        begin
-          response = @client.send(request)
-        rescue Net::HTTPRequestTimeout
-          raise Affinity::Errors::TimeoutError
-        end
-        code = response.code.to_i
-        if code.between?(200, 299)
-          Affinity::Types::CreatePatientAddressResponse.load(response.body)
-        else
-          error_class = Affinity::Errors::ResponseError.subclass_for_code(code)
-          raise error_class.new(response.body, code: code)
-        end
-      end
-
-      # Preserves the address ID and history. Archiving the default selects the oldest remaining active address.
-      # Existing orders remain unchanged.
-      #
-      # @param request_options [Hash]
-      # @param params [Hash]
-      # @option request_options [String] :base_url
-      # @option request_options [Hash{String => Object}] :additional_headers
-      # @option request_options [Hash{String => Object}] :additional_query_parameters
-      # @option request_options [Hash{String => Object}] :additional_body_parameters
-      # @option request_options [Integer] :timeout_in_seconds
-      # @option params [String] :practice_id
-      # @option params [String] :patient_id
-      # @option params [String] :address_id
-      # @option params [String] :idempotency_key
-      # @option params [String, nil] :affinity_actor_id
-      # @option params [String, nil] :affinity_actor_type
-      #
-      # @return [Affinity::Types::ArchivePatientAddressResponse]
-      def archive_patient_address(request_options: {}, **params)
-        params = Affinity::Internal::Types::Utils.normalize_keys(params)
-        headers = {}
-        headers["Idempotency-Key"] = params[:idempotency_key] if params[:idempotency_key]
-        headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
-        headers["Affinity-Actor-Type"] = params[:affinity_actor_type] if params[:affinity_actor_type]
-
-        request = Affinity::Internal::JSON::Request.new(
-          base_url: request_options[:base_url],
-          method: "DELETE",
-          path: "v1/practices/#{URI.encode_uri_component(params[:practice_id].to_s)}/patients/#{URI.encode_uri_component(params[:patient_id].to_s)}/addresses/#{URI.encode_uri_component(params[:address_id].to_s)}",
-          headers: headers,
-          request_options: request_options
-        )
-        begin
-          response = @client.send(request)
-        rescue Net::HTTPRequestTimeout
-          raise Affinity::Errors::TimeoutError
-        end
-        code = response.code.to_i
-        if code.between?(200, 299)
-          Affinity::Types::ArchivePatientAddressResponse.load(response.body)
-        else
-          error_class = Affinity::Errors::ResponseError.subclass_for_code(code)
-          raise error_class.new(response.body, code: code)
-        end
-      end
-
-      # @param request_options [Hash]
-      # @param params [Affinity::Patients::Types::UpdatePatientAddressRequest]
-      # @option request_options [String] :base_url
-      # @option request_options [Hash{String => Object}] :additional_headers
-      # @option request_options [Hash{String => Object}] :additional_query_parameters
-      # @option request_options [Hash{String => Object}] :additional_body_parameters
-      # @option request_options [Integer] :timeout_in_seconds
-      # @option params [String] :practice_id
-      # @option params [String] :patient_id
-      # @option params [String] :address_id
-      # @option params [String] :idempotency_key
-      # @option params [String, nil] :affinity_actor_id
-      # @option params [String, nil] :affinity_actor_type
-      #
-      # @return [Affinity::Types::UpdatePatientAddressResponse]
-      def update_patient_address(request_options: {}, **params)
-        params = Affinity::Internal::Types::Utils.normalize_keys(params)
-        request_data = Affinity::Patients::Types::UpdatePatientAddressRequest.new(params).to_h
-        non_body_param_names = %w[practiceId patientId addressId Idempotency-Key Affinity-Actor-Id Affinity-Actor-Type]
-        body = request_data.except(*non_body_param_names)
-
-        headers = {}
-        headers["Idempotency-Key"] = params[:idempotency_key] if params[:idempotency_key]
-        headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
-        headers["Affinity-Actor-Type"] = params[:affinity_actor_type] if params[:affinity_actor_type]
-
-        request = Affinity::Internal::JSON::Request.new(
-          base_url: request_options[:base_url],
-          method: "PATCH",
-          path: "v1/practices/#{URI.encode_uri_component(params[:practice_id].to_s)}/patients/#{URI.encode_uri_component(params[:patient_id].to_s)}/addresses/#{URI.encode_uri_component(params[:address_id].to_s)}",
-          headers: headers,
-          body: body,
-          request_options: request_options
-        )
-        begin
-          response = @client.send(request)
-        rescue Net::HTTPRequestTimeout
-          raise Affinity::Errors::TimeoutError
-        end
-        code = response.code.to_i
-        if code.between?(200, 299)
-          Affinity::Types::UpdatePatientAddressResponse.load(response.body)
-        else
-          error_class = Affinity::Errors::ResponseError.subclass_for_code(code)
-          raise error_class.new(response.body, code: code)
-        end
-      end
-
-      # Changes delivery selection for future drafts, without changing patient clinical location or existing signed
-      # orders.
-      #
-      # @param request_options [Hash]
-      # @param params [Hash]
-      # @option request_options [String] :base_url
-      # @option request_options [Hash{String => Object}] :additional_headers
-      # @option request_options [Hash{String => Object}] :additional_query_parameters
-      # @option request_options [Hash{String => Object}] :additional_body_parameters
-      # @option request_options [Integer] :timeout_in_seconds
-      # @option params [String] :practice_id
-      # @option params [String] :patient_id
-      # @option params [String] :address_id
-      # @option params [String] :idempotency_key
-      # @option params [String, nil] :affinity_actor_id
-      # @option params [String, nil] :affinity_actor_type
-      #
-      # @return [Affinity::Types::SetDefaultPatientAddressResponse]
-      def set_default_patient_address(request_options: {}, **params)
-        params = Affinity::Internal::Types::Utils.normalize_keys(params)
-        headers = {}
-        headers["Idempotency-Key"] = params[:idempotency_key] if params[:idempotency_key]
-        headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
-        headers["Affinity-Actor-Type"] = params[:affinity_actor_type] if params[:affinity_actor_type]
-
-        request = Affinity::Internal::JSON::Request.new(
-          base_url: request_options[:base_url],
-          method: "PUT",
-          path: "v1/practices/#{URI.encode_uri_component(params[:practice_id].to_s)}/patients/#{URI.encode_uri_component(params[:patient_id].to_s)}/addresses/#{URI.encode_uri_component(params[:address_id].to_s)}/default",
-          headers: headers,
-          request_options: request_options
-        )
-        begin
-          response = @client.send(request)
-        rescue Net::HTTPRequestTimeout
-          raise Affinity::Errors::TimeoutError
-        end
-        code = response.code.to_i
-        if code.between?(200, 299)
-          Affinity::Types::SetDefaultPatientAddressResponse.load(response.body)
-        else
-          error_class = Affinity::Errors::ResponseError.subclass_for_code(code)
-          raise error_class.new(response.body, code: code)
-        end
       end
 
       # Lists patients in one practice and mode. Use externalId for an exact match in the calling integration's
@@ -281,7 +41,7 @@ module Affinity
       # @option params [String, nil] :affinity_actor_type
       #
       # @return [Affinity::Types::ListPatientsResponse]
-      def list_patients(request_options: {}, **params)
+      def list(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         query_params = {}
         query_params["endingBefore"] = params[:ending_before] if params.key?(:ending_before)
@@ -338,19 +98,19 @@ module Affinity
       # @option request_options [Hash{String => Object}] :additional_body_parameters
       # @option request_options [Integer] :timeout_in_seconds
       # @option params [String] :practice_id
-      # @option params [String] :idempotency_key
+      # @option params [String, nil] :idempotency_key
       # @option params [String, nil] :affinity_actor_id
       # @option params [String, nil] :affinity_actor_type
       #
       # @return [Affinity::Types::CreatePatientResponse]
-      def create_patient(request_options: {}, **params)
+      def create(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         request_data = Affinity::Patients::Types::CreatePatientRequest.new(params).to_h
         non_body_param_names = %w[practiceId Idempotency-Key Affinity-Actor-Id Affinity-Actor-Type]
         body = request_data.except(*non_body_param_names)
 
         headers = {}
-        headers["Idempotency-Key"] = params[:idempotency_key] if params[:idempotency_key]
+        headers["Idempotency-Key"] = params[:idempotency_key] || SecureRandom.uuid # affinity-sdk-auto-key
         headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
         headers["Affinity-Actor-Type"] = params[:affinity_actor_type] if params[:affinity_actor_type]
 
@@ -391,7 +151,7 @@ module Affinity
       # @option params [String, nil] :affinity_actor_type
       #
       # @return [Affinity::Types::GetPatientResponse]
-      def get_patient(request_options: {}, **params)
+      def get(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         headers = {}
         headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
@@ -431,15 +191,15 @@ module Affinity
       # @option request_options [Integer] :timeout_in_seconds
       # @option params [String] :practice_id
       # @option params [String] :patient_id
-      # @option params [String] :idempotency_key
+      # @option params [String, nil] :idempotency_key
       # @option params [String, nil] :affinity_actor_id
       # @option params [String, nil] :affinity_actor_type
       #
       # @return [Affinity::Types::DeletePatientResponse]
-      def delete_patient(request_options: {}, **params)
+      def delete(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         headers = {}
-        headers["Idempotency-Key"] = params[:idempotency_key] if params[:idempotency_key]
+        headers["Idempotency-Key"] = params[:idempotency_key] || SecureRandom.uuid # affinity-sdk-auto-key
         headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
         headers["Affinity-Actor-Type"] = params[:affinity_actor_type] if params[:affinity_actor_type]
 
@@ -477,19 +237,19 @@ module Affinity
       # @option request_options [Integer] :timeout_in_seconds
       # @option params [String] :practice_id
       # @option params [String] :patient_id
-      # @option params [String] :idempotency_key
+      # @option params [String, nil] :idempotency_key
       # @option params [String, nil] :affinity_actor_id
       # @option params [String, nil] :affinity_actor_type
       #
       # @return [Affinity::Types::UpdatePatientResponse]
-      def update_patient(request_options: {}, **params)
+      def update(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         request_data = Affinity::Patients::Types::UpdatePatientRequest.new(params).to_h
         non_body_param_names = %w[practiceId patientId Idempotency-Key Affinity-Actor-Id Affinity-Actor-Type]
         body = request_data.except(*non_body_param_names)
 
         headers = {}
-        headers["Idempotency-Key"] = params[:idempotency_key] if params[:idempotency_key]
+        headers["Idempotency-Key"] = params[:idempotency_key] || SecureRandom.uuid # affinity-sdk-auto-key
         headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
         headers["Affinity-Actor-Type"] = params[:affinity_actor_type] if params[:affinity_actor_type]
 
@@ -515,97 +275,14 @@ module Affinity
         end
       end
 
-      # Returns the patient's structured allergy entries and review status. A not_reviewed status is not a
-      # no-known-allergies assertion and blocks clinical review and signing.
-      #
-      # @param request_options [Hash]
-      # @param params [Hash]
-      # @option request_options [String] :base_url
-      # @option request_options [Hash{String => Object}] :additional_headers
-      # @option request_options [Hash{String => Object}] :additional_query_parameters
-      # @option request_options [Hash{String => Object}] :additional_body_parameters
-      # @option request_options [Integer] :timeout_in_seconds
-      # @option params [String] :practice_id
-      # @option params [String] :patient_id
-      # @option params [String, nil] :affinity_actor_id
-      # @option params [String, nil] :affinity_actor_type
-      #
-      # @return [Affinity::Types::GetPatientAllergiesResponse]
-      def get_patient_allergies(request_options: {}, **params)
-        params = Affinity::Internal::Types::Utils.normalize_keys(params)
-        headers = {}
-        headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
-        headers["Affinity-Actor-Type"] = params[:affinity_actor_type] if params[:affinity_actor_type]
-
-        request = Affinity::Internal::JSON::Request.new(
-          base_url: request_options[:base_url],
-          method: "GET",
-          path: "v1/practices/#{URI.encode_uri_component(params[:practice_id].to_s)}/patients/#{URI.encode_uri_component(params[:patient_id].to_s)}/allergies",
-          headers: headers,
-          request_options: request_options
-        )
-        begin
-          response = @client.send(request)
-        rescue Net::HTTPRequestTimeout
-          raise Affinity::Errors::TimeoutError
-        end
-        code = response.code.to_i
-        if code.between?(200, 299)
-          Affinity::Types::GetPatientAllergiesResponse.load(response.body)
-        else
-          error_class = Affinity::Errors::ResponseError.subclass_for_code(code)
-          raise error_class.new(response.body, code: code)
-        end
+      # @return [Affinity::Addresses::Client]
+      def addresses
+        @addresses ||= Affinity::Patients::Addresses::Client.new(client: @client)
       end
 
-      # Replaces the patient's structured allergy record. Sending no_known is the explicit no-known-allergies
-      # acknowledgement; recorded requires at least one entry. Idempotency-Key is required.
-      #
-      # @param request_options [Hash]
-      # @param params [Affinity::Patients::Types::ReplacePatientAllergiesRequest]
-      # @option request_options [String] :base_url
-      # @option request_options [Hash{String => Object}] :additional_headers
-      # @option request_options [Hash{String => Object}] :additional_query_parameters
-      # @option request_options [Hash{String => Object}] :additional_body_parameters
-      # @option request_options [Integer] :timeout_in_seconds
-      # @option params [String] :practice_id
-      # @option params [String] :patient_id
-      # @option params [String] :idempotency_key
-      # @option params [String, nil] :affinity_actor_id
-      # @option params [String, nil] :affinity_actor_type
-      #
-      # @return [Affinity::Types::ReplacePatientAllergiesResponse]
-      def replace_patient_allergies(request_options: {}, **params)
-        params = Affinity::Internal::Types::Utils.normalize_keys(params)
-        request_data = Affinity::Patients::Types::ReplacePatientAllergiesRequest.new(params).to_h
-        non_body_param_names = %w[practiceId patientId Idempotency-Key Affinity-Actor-Id Affinity-Actor-Type]
-        body = request_data.except(*non_body_param_names)
-
-        headers = {}
-        headers["Idempotency-Key"] = params[:idempotency_key] if params[:idempotency_key]
-        headers["Affinity-Actor-Id"] = params[:affinity_actor_id] if params[:affinity_actor_id]
-        headers["Affinity-Actor-Type"] = params[:affinity_actor_type] if params[:affinity_actor_type]
-
-        request = Affinity::Internal::JSON::Request.new(
-          base_url: request_options[:base_url],
-          method: "PUT",
-          path: "v1/practices/#{URI.encode_uri_component(params[:practice_id].to_s)}/patients/#{URI.encode_uri_component(params[:patient_id].to_s)}/allergies",
-          headers: headers,
-          body: body,
-          request_options: request_options
-        )
-        begin
-          response = @client.send(request)
-        rescue Net::HTTPRequestTimeout
-          raise Affinity::Errors::TimeoutError
-        end
-        code = response.code.to_i
-        if code.between?(200, 299)
-          Affinity::Types::ReplacePatientAllergiesResponse.load(response.body)
-        else
-          error_class = Affinity::Errors::ResponseError.subclass_for_code(code)
-          raise error_class.new(response.body, code: code)
-        end
+      # @return [Affinity::Allergies::Client]
+      def allergies
+        @allergies ||= Affinity::Patients::Allergies::Client.new(client: @client)
       end
     end
   end

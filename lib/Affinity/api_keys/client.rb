@@ -25,7 +25,7 @@ module Affinity
       # @option params [String] :idempotency_key
       #
       # @return [Affinity::Types::CreatePlatformPracticeAPIKeyResponse]
-      def create_platform_practice_api_key(request_options: {}, **params)
+      def create(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         request_data = Affinity::APIKeys::Types::CreatePlatformPracticeAPIKeyRequest.new(params).to_h
         non_body_param_names = %w[practiceId Idempotency-Key]
@@ -67,7 +67,7 @@ module Affinity
       # @option request_options [Integer] :timeout_in_seconds
       #
       # @return [Affinity::Types::GetAPIAccessResponse]
-      def get_api_access(request_options: {}, **_params)
+      def get_access(request_options: {}, **_params)
         request = Affinity::Internal::JSON::Request.new(
           base_url: request_options[:base_url],
           method: "GET",

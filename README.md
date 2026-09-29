@@ -1,64 +1,44 @@
 # Affinity Ruby SDK
 
-[Proposed SDK guide](docs/guide.md) · Review the next interface for practice keys, platforms, patient records, and order signing. These examples are not implemented yet.
+Server-side client for the Affinity API. Requires Ruby 3.0+.
 
-Generated client for the Affinity API, version `2026-09-28`. This is a source preview
-at `0.2.0`; the generated interface may change before a stable release.
+The new interface is implemented in this source update and has not been published to a registry yet.
 
-## Install and use
+## Install from source
 
-Requires Ruby 3.3 or newer. Add the GitHub source to your Gemfile:
-
-```ruby
-gem "affinity-health-sdk", git: "https://github.com/affinity-health/affinity-ruby", branch: "main"
+```sh
+git clone https://github.com/affinity-health/affinity-ruby.git
+cd affinity-ruby
+gem build Affinity.gemspec
+gem install ./affinity-health-sdk-0.2.0.gem
 ```
 
-Run `bundle install`, then:
+## Use
+
+Set `AFFINITY_API_KEY` to a Test practice key on your server. Keep API keys out of browser and mobile code.
 
 ```ruby
 require "affinity"
 
-client = Affinity::Client.new(api_key: ENV.fetch("AFFINITY_API_KEY"), max_retries: 0)
-page = client.orders.list(
-  limit: 20
-)
-puts page.data.length
+api = Affinity::Client.new(ENV.fetch("AFFINITY_API_KEY"))
+patients = api.patients.list({ limit: 20 })
 ```
 
-Set `affinity_version:` once on the client to override the API version. Write methods that
-require idempotency accept `idempotency_key:`. This gem is not published on RubyGems.
 
-Use a server-side API key from `AFFINITY_API_KEY`. Never embed keys in a browser or
-shipped application. The default base URL is `https://api.joinaffinityai.com`.
-These examples disable automatic retries. Reuse the same idempotency key when
-retrying a write that requires one. List responses expose data and cursor metadata;
-pass the next cursor explicitly when fetching more records.
 
-See [the generated reference](reference.md) for resource methods and types and
-[Affinity documentation](https://docs.joinaffinityai.com) for API behavior.
-Generated reference examples may assume registry publication; use the installation
-instructions above while this SDK is available only from GitHub.
+Practice keys identify their practice automatically. Platform keys pass a practice ID in request options or use a scoped client.
 
-## Development
+See the [SDK guide](docs/guide.md) for platform requests, patient updates, signing, submission, pagination, and errors.
+Routine patient writes generate an idempotency key. Persist your own keys for order creation, signing, and submission.
 
-With Docker installed:
+Defaults: API `2026-09-28`, a 60-second timeout, and no automatic retries.
+
+## Verify
 
 ```sh
 ./scripts/check.sh
 ```
 
-This builds/packages the SDK locally and checks synthetic HTTP requests, authentication,
-API version headers, pagination parameters, response decoding, and failed writes.
-It does not call the hosted API or publish a package.
+The tests use synthetic fixtures on loopback. The fixture runner requires Python 3; Docker runs the language toolchain for the `scripts/check.sh` commands.
 
-The committed [OpenAPI contract](spec/affinity.openapi.json) is the source of truth.
-[generation.json](generation.json) records the pinned Cloudflare Forge and Fern
-versions and source hash. Generation is maintained in Affinity's SDK pipeline.
-Do not edit generated models directly.
-
-## Guide
-
-Read the [Ruby guide](https://docs.joinaffinityai.com/guides/reference/sdks/ruby/) for patients, catalog items, writes, pagination, and errors.
-
-Version 0.2.0 defaults to API `2026-09-28`, no automatic retries, and a 60-second timeout.
-Explicit client and request options override these defaults. Custom HTTP transports manage their own timeout support.
+Generated with Cloudflare Forge, Fern, and Affinity's facade generator. [generation.json](generation.json) records the pinned inputs. Fix the generator in the Affinity monorepo before regenerating client code.

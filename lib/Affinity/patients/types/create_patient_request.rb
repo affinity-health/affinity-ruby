@@ -6,7 +6,7 @@ module Affinity
       class CreatePatientRequest < Internal::Types::Model
         field :practice_id, -> { String }, optional: false, nullable: false, api_name: "practiceId"
 
-        field :idempotency_key, -> { String }, optional: false, nullable: false, api_name: "Idempotency-Key"
+        field :idempotency_key, -> { String }, optional: true, nullable: false, api_name: "Idempotency-Key"
 
         field :affinity_actor_id, -> { String }, optional: true, nullable: false, api_name: "Affinity-Actor-Id"
 

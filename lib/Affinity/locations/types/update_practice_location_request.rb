@@ -8,7 +8,7 @@ module Affinity
 
         field :location_id, -> { String }, optional: false, nullable: false, api_name: "locationId"
 
-        field :idempotency_key, -> { String }, optional: false, nullable: false, api_name: "Idempotency-Key"
+        field :idempotency_key, -> { String }, optional: true, nullable: false, api_name: "Idempotency-Key"
 
         field :city, -> { String }, optional: true, nullable: false
 

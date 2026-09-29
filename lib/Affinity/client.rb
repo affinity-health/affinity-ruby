@@ -7,14 +7,16 @@ module Affinity
     # @param max_retries [Integer]
     #
     # @return [void]
-    def initialize(api_key:, base_url: nil, max_retries: 2)
+    def initialize(api_key:, base_url: nil, max_retries: 0, affinity_version: "2026-09-28", timeout: 60.0)
       @raw_client = Affinity::Internal::Http::RawClient.new(
         base_url: base_url || Affinity::Environment::PRODUCTION,
         headers: {
           "X-Fern-Language" => "Ruby",
-          "x-affinity-api-key" => api_key.to_s
+          "x-affinity-api-key" => api_key.to_s,
+          "Affinity-Version" => affinity_version
         },
-        max_retries: max_retries
+        max_retries: max_retries,
+        timeout: timeout
       )
     end
 
@@ -33,9 +35,9 @@ module Affinity
       @account ||= Affinity::Account::Client.new(client: @raw_client)
     end
 
-    # @return [Affinity::Catalog::Client]
-    def catalog
-      @catalog ||= Affinity::Catalog::Client.new(client: @raw_client)
+    # @return [Affinity::Pharmacies::Client]
+    def pharmacies
+      @pharmacies ||= Affinity::Pharmacies::Client.new(client: @raw_client)
     end
 
     # @return [Affinity::Orders::Client]
@@ -43,19 +45,9 @@ module Affinity
       @orders ||= Affinity::Orders::Client.new(client: @raw_client)
     end
 
-    # @return [Affinity::Webhooks::Client]
-    def webhooks
-      @webhooks ||= Affinity::Webhooks::Client.new(client: @raw_client)
-    end
-
     # @return [Affinity::Team::Client]
     def team
       @team ||= Affinity::Team::Client.new(client: @raw_client)
-    end
-
-    # @return [Affinity::Patients::Client]
-    def patients
-      @patients ||= Affinity::Patients::Client.new(client: @raw_client)
     end
 
     # @return [Affinity::Practices::Client]
@@ -63,9 +55,19 @@ module Affinity
       @practices ||= Affinity::Practices::Client.new(client: @raw_client)
     end
 
-    # @return [Affinity::PlatformPricing::Client]
-    def platform_pricing
-      @platform_pricing ||= Affinity::PlatformPricing::Client.new(client: @raw_client)
+    # @return [Affinity::Patients::Client]
+    def patients
+      @patients ||= Affinity::Patients::Client.new(client: @raw_client)
+    end
+
+    # @return [Affinity::Catalog::Client]
+    def catalog
+      @catalog ||= Affinity::Catalog::Client.new(client: @raw_client)
+    end
+
+    # @return [Affinity::Webhooks::Client]
+    def webhooks
+      @webhooks ||= Affinity::Webhooks::Client.new(client: @raw_client)
     end
   end
 end

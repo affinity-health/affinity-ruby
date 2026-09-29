@@ -24,7 +24,7 @@ module Affinity
       # @option params [String, nil] :org_id
       #
       # @return [Affinity::Types::GetAccountResponse]
-      def get_account(request_options: {}, **params)
+      def get(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         query_params = {}
         query_params["orgId"] = params[:org_id] if params.key?(:org_id)

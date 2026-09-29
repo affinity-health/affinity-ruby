@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+module Affinity
+  module Team
+    module Invitations
+      module Types
+        class InvitePracticeTeamPersonRequestAddress < Internal::Types::Model
+          field :city, -> { String }, optional: false, nullable: false
+
+          field :country, -> { String }, optional: false, nullable: false
+
+          field :line1, -> { String }, optional: false, nullable: false
+
+          field :line2, -> { String }, optional: true, nullable: false
+
+          field :postal_code, -> { String }, optional: false, nullable: false, api_name: "postalCode"
+
+          field :state, -> { String }, optional: false, nullable: false
+        end
+      end
+    end
+  end
+end

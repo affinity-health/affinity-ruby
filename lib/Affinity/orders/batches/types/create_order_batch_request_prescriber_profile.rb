@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+module Affinity
+  module Orders
+    module Batches
+      module Types
+        class CreateOrderBatchRequestPrescriberProfile < Internal::Types::Model
+          field :email, -> { String }, optional: true, nullable: false
+
+          field :phone, -> { String }, optional: true, nullable: false
+        end
+      end
+    end
+  end
+end

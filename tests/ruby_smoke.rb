@@ -20,12 +20,12 @@ thread = Thread.new do
     socket.close
   end
 end
-client = Affinity::Client.new(api_key: "synthetic-key", base_url: "http://127.0.0.1:#{server.addr[1]}", max_retries: 0)
-options = { additional_headers: { "Affinity-Version" => "2026-09-28" } }
-page = client.orders.list_orders(limit: 2, starting_after: "ord_cursor", request_options: options)
+client = Affinity::GeneratedClient.new(api_key: "synthetic-key", base_url: "http://127.0.0.1:#{server.addr[1]}", max_retries: 0)
+options = {}
+page = client.orders.list(limit: 2, starting_after: "ord_cursor", request_options: options)
 raise "response" unless page.data.empty? && page.has_more == false
 begin
-  client.orders.create_order(idempotency_key: "stable-synthetic-key", practice_id: "prac_synthetic", patient_id: "pat_synthetic", prescriptions: [], request_options: options)
+  client.orders.create(idempotency_key: "stable-synthetic-key", practice_id: "prac_synthetic", patient_id: "pat_synthetic", prescriptions: [], request_options: options)
   raise "expected API error"
 rescue Affinity::Errors::ApiError
 end

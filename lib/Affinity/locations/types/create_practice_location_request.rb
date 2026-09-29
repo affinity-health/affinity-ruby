@@ -6,7 +6,7 @@ module Affinity
       class CreatePracticeLocationRequest < Internal::Types::Model
         field :practice_id, -> { String }, optional: false, nullable: false, api_name: "practiceId"
 
-        field :idempotency_key, -> { String }, optional: false, nullable: false, api_name: "Idempotency-Key"
+        field :idempotency_key, -> { String }, optional: true, nullable: false, api_name: "Idempotency-Key"
 
         field :city, -> { String }, optional: true, nullable: false
 

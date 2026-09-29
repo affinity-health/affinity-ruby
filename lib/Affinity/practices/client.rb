@@ -1,3 +1,4 @@
+require "securerandom"
 # frozen_string_literal: true
 
 module Affinity
@@ -25,7 +26,7 @@ module Affinity
       # @option params [String, nil] :starting_after
       #
       # @return [Affinity::Types::ListPracticesResponse]
-      def list_practices(request_options: {}, **params)
+      def list(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         query_params = {}
         query_params["search"] = params[:search] if params.key?(:search)
@@ -68,7 +69,7 @@ module Affinity
       # @option params [String, nil] :idempotency_key
       #
       # @return [Affinity::Types::CreatePracticeResponse]
-      def create_practice(request_options: {}, **params)
+      def create(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         request_data = Affinity::Practices::Types::CreatePracticeRequest.new(params).to_h
         non_body_param_names = %w[Idempotency-Key]
@@ -111,7 +112,7 @@ module Affinity
       # @option params [String] :practice_id
       #
       # @return [Affinity::Types::GetPracticeResponse]
-      def get_practice(request_options: {}, **params)
+      def get(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         request = Affinity::Internal::JSON::Request.new(
           base_url: request_options[:base_url],
@@ -148,14 +149,14 @@ module Affinity
       # @option params [String, nil] :idempotency_key
       #
       # @return [Affinity::Types::UpdatePracticeResponse]
-      def update_practice(request_options: {}, **params)
+      def update(request_options: {}, **params)
         params = Affinity::Internal::Types::Utils.normalize_keys(params)
         request_data = Affinity::Practices::Types::UpdatePracticeRequest.new(params).to_h
         non_body_param_names = %w[practiceId Idempotency-Key]
         body = request_data.except(*non_body_param_names)
 
         headers = {}
-        headers["Idempotency-Key"] = params[:idempotency_key] if params[:idempotency_key]
+        headers["Idempotency-Key"] = params[:idempotency_key] || SecureRandom.uuid # affinity-sdk-auto-key
 
         request = Affinity::Internal::JSON::Request.new(
           base_url: request_options[:base_url],
