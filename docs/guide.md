@@ -1,11 +1,16 @@
 # Ruby SDK guide
 
-> **Unreleased SDK update.**
-  These examples match the new SDK implementation in the repository. They are not available in the
-  current published release yet. Release versions and installation updates will follow.
-
-
 Ruby server applications. Request data and options use separate hashes, following Stripe Ruby. [Source repository](https://github.com/affinity-health/affinity-ruby) · [All SDKs](https://docs.joinaffinityai.com/guides/reference/sdks/)
+
+## Install
+
+Add the Git repository to your Gemfile, then run `bundle install`.
+
+```ruby
+gem "affinity-health-sdk", git: "https://github.com/affinity-health/affinity-ruby.git", branch: "main"
+```
+
+For reproducible builds, pin the Git dependency to a commit.
 
 ## Connect
 
