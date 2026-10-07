@@ -2,6 +2,6 @@
 
 module Affinity
   class Environment
-    PRODUCTION = "https://api.joinaffinityai.com"
+    PRODUCTION = "https://api.affinityrx.com"
   end
 end

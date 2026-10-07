@@ -2,7 +2,7 @@
 
 module Affinity
   module Types
-    class PlatformPublicAPISellingPricesUpdateSellingPriceResponseBasisPackage < Internal::Types::Model
+    class PlatformPublicAPISellingPricesReadPresentationPriceResponseAffinityBasisPackage < Internal::Types::Model
       field :quantity, -> { String }, optional: false, nullable: false
 
       field :unit, -> { String }, optional: false, nullable: false

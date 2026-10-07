@@ -2,10 +2,10 @@
 
 module Affinity
   module Types
-    module PlatformPublicAPISellingPricesUpdateSellingPriceResponseCurrency
+    module PlatformPublicAPISellingPricesReadSellingPriceResponseAffinityBasisUnitQuantity
       extend Affinity::Internal::Types::Enum
 
-      USD = "USD"
+      ONE = "1"
     end
   end
 end

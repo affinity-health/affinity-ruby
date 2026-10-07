@@ -5,8 +5,8 @@ module Affinity
     module UpdatePatientResponseClinicalProfileHeightInchesOne
       extend Affinity::Internal::Types::Enum
 
-      INFINITY = "Infinity"
       NA_N = "NaN"
+      INFINITY = "Infinity"
     end
   end
 end

@@ -7,10 +7,10 @@ module Affinity
         module UpdateOrderTestSimulationRequestAction
           extend Affinity::Internal::Types::Enum
 
-          ACCEPT = "accept"
-          PROCESS = "process"
           SHIP = "ship"
           DELIVER = "deliver"
+          ACCEPT = "accept"
+          PROCESS = "process"
           REJECT = "reject"
           CONFIRM_CANCELLATION = "confirm_cancellation"
           DECLINE_CANCELLATION = "decline_cancellation"

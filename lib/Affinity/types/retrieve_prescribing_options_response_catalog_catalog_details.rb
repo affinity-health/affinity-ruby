@@ -3,6 +3,8 @@
 module Affinity
   module Types
     class RetrievePrescribingOptionsResponseCatalogCatalogDetails < Internal::Types::Model
+      field :package_components, -> { Internal::Types::Array[Affinity::Types::RetrievePrescribingOptionsResponseCatalogCatalogDetailsPackageComponentsItem] }, optional: true, nullable: false, api_name: "packageComponents"
+
       field :attributes, -> { Internal::Types::Hash[String, Affinity::Types::RetrievePrescribingOptionsResponseCatalogCatalogDetailsAttributesValue] }, optional: false, nullable: false
 
       field :directions, -> { Internal::Types::Array[Affinity::Types::RetrievePrescribingOptionsResponseCatalogCatalogDetailsDirectionsItem] }, optional: false, nullable: false

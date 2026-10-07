@@ -2,7 +2,7 @@
 
 module Affinity
   module Types
-    module PlatformPublicAPISellingPricesUpdateSellingPriceResponseBasisUnitQuantity
+    module PlatformPublicAPISellingPricesReadPresentationPriceResponseBasisItemQuantity
       extend Affinity::Internal::Types::Enum
 
       ONE = "1"

@@ -9,7 +9,7 @@ module Affinity
 
       field :external_order_id, -> { String }, optional: false, nullable: true, api_name: "externalOrderId"
 
-      field :metadata, -> { Affinity::Types::AddOrderPrescriptionResponseMetadata }, optional: false, nullable: false
+      field :metadata, -> { Internal::Types::Hash[String, Affinity::Types::AddOrderPrescriptionResponseMetadataValue] }, optional: false, nullable: false
 
       field :order_id, -> { String }, optional: false, nullable: false, api_name: "orderId"
 

@@ -2,12 +2,12 @@
 
 Server-side client for the Affinity API. Requires Ruby 3.0+.
 
-The new interface is implemented in this source update and has not been published to a registry yet.
+Version 0.3.0 targets the deployed Affinity API contract used by TypeScript SDK 1.16.0. Install this SDK from GitHub; registry publication is deferred.
 
 ## Install from source
 
 ```sh
-git clone https://github.com/affinity-health/affinity-ruby.git
+git clone --branch v0.3.0 https://github.com/affinity-health/affinity-ruby.git
 cd affinity-ruby
 gem build Affinity.gemspec
 gem install ./affinity-health-sdk-0.2.0.gem

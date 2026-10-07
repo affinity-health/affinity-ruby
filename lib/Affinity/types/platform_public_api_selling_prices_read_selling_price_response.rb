@@ -9,6 +9,10 @@ module Affinity
 
       field :currency, -> { Affinity::Types::PlatformPublicAPISellingPricesReadSellingPriceResponseCurrency }, optional: false, nullable: false
 
+      field :affinity_price_cents, -> { Integer }, optional: false, nullable: true, api_name: "affinityPriceCents"
+
+      field :affinity_basis, -> { Affinity::Types::PlatformPublicAPISellingPricesReadSellingPriceResponseAffinityBasis }, optional: false, nullable: true, api_name: "affinityBasis"
+
       field :basis, -> { Affinity::Types::PlatformPublicAPISellingPricesReadSellingPriceResponseBasis }, optional: false, nullable: false
 
       field :purchase_amount_cents, -> { Integer }, optional: false, nullable: false, api_name: "purchaseAmountCents"

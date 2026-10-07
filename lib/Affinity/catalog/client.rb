@@ -29,6 +29,11 @@ module Affinity
       def selling_prices
         @selling_prices ||= Affinity::Catalog::SellingPrices::Client.new(client: @client)
       end
+
+      # @return [Affinity::PresentationPrices::Client]
+      def presentation_prices
+        @presentation_prices ||= Affinity::Catalog::PresentationPrices::Client.new(client: @client)
+      end
     end
   end
 end
